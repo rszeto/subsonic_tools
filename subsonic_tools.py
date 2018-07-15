@@ -74,6 +74,9 @@ def sort_playlists(args):
         playlist_id = playlist.get("id")
         playlist = subsonic_call("getPlaylist", {"id": playlist.get("id")})
 
+        playlist_title = playlist.get('name')
+        print('Processing playlist "%s"' % playlist_title.encode('utf-8'))
+
         song_titles = []
         song_ids = []
         for entry in playlist.iter("{%(ns)s}entry" % {"ns": subsonic_namespace }):
