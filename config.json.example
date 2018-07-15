@@ -1,0 +1,6 @@
+{
+  "server_url": "http://yourname.subsonic.org",
+  "user": "user",
+  "password": "password",
+  "music_root": "/path/to/music/files"
+}

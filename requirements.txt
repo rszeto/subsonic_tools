@@ -1,0 +1,2 @@
+requests>=2.19.1 
+mutagen>=1.40.0
