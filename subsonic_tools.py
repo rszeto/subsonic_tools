@@ -20,15 +20,15 @@ from pprint import pprint
 
 from mutagen.easyid3 import EasyID3
 
-subsonic_namespace = "http://subsonic.org/restapi"
-subsonic_client = "Subsonic-Tools"
-subsonic_apiVersion = "1.8.0"
+subsonic_namespace = 'http://subsonic.org/restapi'
+subsonic_client = 'Subsonic-Tools'
+subsonic_apiVersion = '1.8.0'
 
 def create_subsonic_call_fn(subsonic_url, subsonic_user, subsonic_password, verbose):
 
     def subsonic_call(command, params = []):
         # Construct the REST call
-        url = "%s/rest/%s.view?v=%s&c=%s&%s" % (subsonic_url, command, subsonic_apiVersion,
+        url = '%s/rest/%s.view?v=%s&c=%s&%s' % (subsonic_url, command, subsonic_apiVersion,
                                                 subsonic_client, urllib.urlencode(params, True))
         if verbose:
             print('Accessing URL: %s' % url)
@@ -40,16 +40,16 @@ def create_subsonic_call_fn(subsonic_url, subsonic_user, subsonic_password, verb
             print(response.text.encode('utf-8'))
 
         if response.status_code != 200:
-            raise Exception("Subsonic REST API returned status code %s" % response.status_code)
+            raise Exception('Subsonic REST API returned status code %s' % response.status_code)
 
         # Parse the response (obtain the content and any errors)
         root = ET.fromstring(response.text.encode('utf-8'))
-        error = root.find("{%(ns)s}error" % {"ns": subsonic_namespace})
+        error = root.find('{%(ns)s}error' % {'ns': subsonic_namespace})
         
         if error is not None:
-            raise Exception("Error (Code: %(code)s, Text: %(text)s)" % {
-                "code": error.get("code"),
-                "text": error.get("message")
+            raise Exception('Error (Code: %(code)s, Text: %(text)s)' % {
+                'code': error.get('code'),
+                'text': error.get('message')
             })
         else:
             # First child is response object (unless an empty <subsonic-response> object is
@@ -67,21 +67,21 @@ def sort_playlists(args):
                                             config['password'], args.verbose)
      
     # Get list of playlists
-    playlists = subsonic_call("getPlaylists")
-    for playlist in playlists.iter("{%(ns)s}playlist" % {"ns": subsonic_namespace}):
+    playlists = subsonic_call('getPlaylists')
+    for playlist in playlists.iter('{%(ns)s}playlist' % {'ns': subsonic_namespace}):
     
         # Get the songs in the current playlist
-        playlist_id = playlist.get("id")
-        playlist = subsonic_call("getPlaylist", {"id": playlist.get("id")})
+        playlist_id = playlist.get('id')
+        playlist = subsonic_call('getPlaylist', {'id': playlist.get('id')})
 
         playlist_title = playlist.get('name')
         print('Processing playlist "%s"' % playlist_title.encode('utf-8'))
 
         song_titles = []
         song_ids = []
-        for entry in playlist.iter("{%(ns)s}entry" % {"ns": subsonic_namespace }):
+        for entry in playlist.iter('{%(ns)s}entry' % {'ns': subsonic_namespace }):
             # Get the path to the current music file
-            file_path = os.path.join(music_root.encode("utf-8"), entry.get("path").encode("utf-8"))
+            file_path = os.path.join(music_root.encode('utf-8'), entry.get('path').encode('utf-8'))
             
             # Store the ID3 title of the current song
             with open(file_path, 'rb') as f:
@@ -109,7 +109,7 @@ def sort_playlists(args):
             'songIdToAdd': sorted_song_ids
         })
 
-    print "Done."    
+    print 'Done.'    
 
 def argsort(seq, key=None):
     """Adapted from https://stackoverflow.com/a/6979121"""
@@ -139,5 +139,5 @@ def main():
     args = parser_parent.parse_args()
     args.func(args);
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
