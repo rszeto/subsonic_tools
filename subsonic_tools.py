@@ -91,7 +91,7 @@ def sort_playlists(args):
             song_ids.append(song_id)
         
         # Sort the song IDs by title
-        sorted_indexes = argsort(song_titles)
+        sorted_indexes = argsort(song_titles, key=lambda i: song_titles[i].lower())
         sorted_song_ids = index_select(song_ids, sorted_indexes)
 
         # Remove all songs
@@ -108,9 +108,11 @@ def sort_playlists(args):
 
     print "Done."    
 
-def argsort(seq):
-    """From https://stackoverflow.com/a/6979121"""
-    return sorted(range(len(seq)), key=seq.__getitem__)
+def argsort(seq, key=None):
+    """Adapted from https://stackoverflow.com/a/6979121"""
+    if key is None:
+        key = seq.__getitem__
+    return sorted(range(len(seq)), key=key)
 
 def index_select(seq, indexes):
     ret = []
