@@ -18,8 +18,6 @@ from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 from pprint import pprint
 
-from mutagen.easyid3 import EasyID3
-
 subsonic_namespace = 'http://subsonic.org/restapi'
 subsonic_client = 'Subsonic-Tools'
 subsonic_apiVersion = '1.8.0'
@@ -80,18 +78,14 @@ def sort_playlists(args):
         song_titles = []
         song_ids = []
         for entry in playlist.iter('{%(ns)s}entry' % {'ns': subsonic_namespace }):
-            # Get the path to the current music file
-            file_path = os.path.join(music_root.encode('utf-8'), entry.get('path').encode('utf-8'))
-            
-            # Store the ID3 title of the current song
-            with open(file_path, 'rb') as f:
-                id3_tag = EasyID3(f)
-                song_title = id3_tag['title'][0].encode('utf-8')
-            song_titles.append(song_title)
-
             # Store the Subsonic song ID
             song_id = entry.get('id')
             song_ids.append(song_id)
+
+            # Get and store the title of the song
+            song_info = subsonic_call('getSong', {'id': song_id})
+            song_title = song_info.get('title')
+            song_titles.append(song_title)
         
         # Sort the song IDs by title
         sorted_indexes = argsort(song_titles, key=lambda i: song_titles[i].lower())
